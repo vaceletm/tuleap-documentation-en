@@ -116,9 +116,13 @@ project repositories. This includes:
 
 -  default branch,
 
+-  allowing to close artifacts with Git commit message
+
 -  access control,
 
 -  and "Email notification on push"
+
+.. _git-default-branch:
 
 Default Branch
 ``````````````
@@ -292,6 +296,41 @@ It is possible to link to other files in your repo or to images stored in the re
 
 Relative links operands ``./`` and ``../`` can be used to link to a file relatively to the current file.
 
+Close Tracker Artifacts with Git commit message
+-----------------------------------------------
+
+It is possible to close a :ref:`Tracker Artifact <tracker-terminology>` by referencing it in a Git commit message.
+If a commit with a message containing a closing keyword (see below) before a reference to an artifact is pushed, the artifact's status will be set to "Done".
+
+Several conditions are needed:
+
+1. The Git repository setting "Allow artifact closure" must be enabled.
+2. You must push commits on the :ref:`default branch<git-default-branch>` of the repository.
+3. The reference must have the form ``<closing_keyword> <reference_keyword> #<artifact_id>``. For example: ``Implements story #123`` or ``closed art #456``.
+4. The referenced artifact belongs to the same Project as the Git repository.
+5. The referenced artifact's :ref:`Status <status-semantic>` is not already closed.
+6. The :ref:`"Done" semantic <done-semantic>` of the Tracker is defined. If it isn't defined, the Tracker's :ref:`"Status" semantic <status-semantic>` is configured and all the values are not "open" (there is at least one "closed" value).
+7. The artifact's Tracker :ref:`Workflow <tracker-workflow>` applies and may prevent closing the artifact.
+8. :ref:`Field dependencies<tracker-field-dependencies>` apply and may prevent closing the artifact.
+
+The following keywords (case insensitive) can be used to close an artifact:
+
+* ``Closes`` art #123
+* ``Resolves`` art #123
+* ``Fixes`` art #123
+* ``Implements`` art #123
+
+Some variations of these keywords are handled:
+
+* ``Close``/``Fix``/``Resolve``/``Implement``
+* ``Closes``/``Fixes``/``Resolves``/``Implements``
+* ``Closed``/``Fixed``/``Resolved``/``Implemented``
+* ``Closing``/``Fixing``/``Resolving``/``Implementing``
+
+When all those conditions are met, the referenced artifact's status will be changed to the first valid :ref:`"Done" semantic <done-semantic>` value. If the "Done" semantic is not defined, the first "closed" value (per "Status" semantic configuration) will be used. The artifact will be closed by a Tuleap bot named ``Tracker Workflow Manager`` with a follow-up comment explaining why it has been closed.
+
+It is possible to close several Tracker Artifacts at once in a single commit message.
+
 .. _git_lfs:
 
 Git Large File Storage (LFS)
@@ -356,6 +395,37 @@ Note: If you were using tuleap before 10.9 and you already had files bigger than
 .. IMPORTANT:: Site administrators might grant your project an exception and allow arbitrary file size in your projects.
   For them, it's done in "Git" section of Site administration.
 
+
+Git branch creation through Tracker artifact actions
+-----------------------------------------------------
+
+.. IMPORTANT:: To have this action available, both ``Git`` and ``Tracker`` plugins must be installed, and some Git repositories must exist in the same project of the artifact.
+
+Starting Tuleap 13.11, a new action is available in Tracker artifact actions, the ability to create a new Git branch and the associated pull-request.
+
+   .. figure:: ../../images/screenshots/git/artifact-action-create-branch.png
+      :align: center
+      :alt: Artifact action create Git branch and pull request
+      :name: Artifact action create Git branch and pull request
+
+Once selected, a modal to create the branch and the associated pull-request will appear.
+
+In the modal, you will have the Git project repositories user is able to write in. No personal forks are listed.
+
+When selecting a repository, the reference input will be updated with the default branch name of the selected repository.
+You can also write another Git branch name or a commit reference (SHA-1) from the repository. The new branch will be based on it.
+
+There is a preview of the Git branch name that will be created. This name is fixed by Tuleap and cannot be updated. 
+The format of the branch name is: ``tuleap-{artifact_id}-{artifact-title}``
+
+The checkbox to create the associated pull-request is checked by default.
+
+   .. figure:: ../../images/screenshots/git/artifact-action-create-branch-modal.png
+      :align: center
+      :alt: Artifact action create Git branch and pull request modal
+      :name: Artifact action create Git branch and pull request modal
+
+.. IMPORTANT:: The ``pull-request`` plugin needs to be installed and activated for the project in order to be able to create the pull-request. Otherwise only Git branches can be created.
 
 Git References
 ---------------

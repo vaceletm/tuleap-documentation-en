@@ -1,4 +1,4 @@
-FROM nixos/nix:2.9.2 AS builder
+FROM nixos/nix:2.10.3 AS builder
 
 COPY --chown=1000:1000 . /home/builder/tuleap-documentation
 
@@ -16,7 +16,7 @@ RUN npm ci && npm run build && \
     pip install -r requirements.txt && \
     make SPHINXOPTS="-D html_theme=tuleap_org" html
 
-FROM nginx:1.23.0-alpine
+FROM nginx:1.23.1-alpine
 
 COPY docs.tuleap.org/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /home/builder/tuleap-documentation/_build/html/en/ /usr/share/nginx/html
