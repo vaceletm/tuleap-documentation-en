@@ -30,15 +30,32 @@ Two different backends are provided via two different plugins:
 * MySQL Database (``tuleap-plugin-fts_db``)
 * Meilisearch Server (``tuleap-plugin-fts_meilisearch``)
 
+
+The recommended backend is Meilisearch because it provides more relevant search results.
+
+MySQL backend
+'''''''''''''
+
 Database implementation rely on `MySQL Natural Language Full-Text Searches
 <https://dev.mysql.com/doc/refman/8.0/en/fulltext-natural-language.html>`_. It targets small to medium Tuleap instances.
 It is not suitable for large instances with more than 200'000 artifacts: search quality and performance are not adequate.
 Furthermore content written in ideographic languages such as Chinese and Japanese are not correctly indexed and you will
 not be able to find them in the search.
 
+Meilisearch
+'''''''''''
+
 Based on first feedbacks, Meilisearch implementation does not seem to suffer the same limitations and it provides more
-relevant results (we are still waiting for feedbacks for big instances with lot of artifacts). It needs a remote or
-local `Meilisearch server <https://www.meilisearch.com/>`_ instance.
+relevant results. 
+
+The main limitations as of today are related to the fact that the technology is still young and we don't have a lot of
+operational experience on it, especially with large volumes. It's likely that a large instances (200'000+ artifacts) will 
+need a dedicated server for the Meilisearch server.
+
+That being said, as it's a plugin and there is another implementation, you can switch back to MySQL implementation at anytime.
+
+
+It needs a remote or local `Meilisearch server <https://www.meilisearch.com/>`_ instance.
 
 * Remote server needs a server url and an API key to be able to index and search. Those settings can be set via
   web UI (Site administration » plugins » Meilisearch) or via CLI:
